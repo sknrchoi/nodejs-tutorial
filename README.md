@@ -14,20 +14,20 @@ Nodejs Theory and practice
 
 ## 웹 어플리케이션 만들기
 ~~~
-> const http = require('http');
-> 
-> const hostname = '127.0.0.1';
-> const port = 3000;
-> 
-> const server = http.createServer((req, res) => {
->   res.statusCode = 200;
->   res.setHeader('Content-Type', 'text/plain');
->   res.end('Hello World\n');
-> });
-> 
-> server.listen(port, hostname, () => {
->   console.log(`Server running at http://${hostname}:${port}/`);
-> });
+const http = require('http');
+
+const hostname = '127.0.0.1';
+const port = 3000;
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World\n');
+});
+ 
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
 ~~~
 1. webserver.js파일을 생성하고 위의 코드를 추가한다. 
 2. node {파일명.js}를 입력하여 웹서버 어플리케이션을 실행시킴
