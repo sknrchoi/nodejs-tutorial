@@ -1,7 +1,7 @@
 # nodejs
 Nodejs Theory and practice
 
-##설치하기
+## 설치하기
 1. https://nodejs.org 이동한다.
 2. Download버튼을 클릭해서 해당되는 운영체제에 맞는 것을 클릭한다.
 (나는 macOS를 사용중이기에 macOS Installer를 선택함)
@@ -12,3 +12,24 @@ Nodejs Theory and practice
 	v8.11.4
 
 
+## 웹 어플리케이션 만들기
+~~~
+> const http = require('http');
+> 
+> const hostname = '127.0.0.1';
+> const port = 3000;
+> 
+> const server = http.createServer((req, res) => {
+>   res.statusCode = 200;
+>   res.setHeader('Content-Type', 'text/plain');
+>   res.end('Hello World\n');
+> });
+> 
+> server.listen(port, hostname, () => {
+>   console.log(`Server running at http://${hostname}:${port}/`);
+> });
+~~~
+1. webserver.js파일을 생성하고 위의 코드를 추가한다. 
+2. node {파일명.js}를 입력하여 웹서버 어플리케이션을 실행시킴
+	> node webserver.js
+2. 브라우저를 통해서 실행시킨 웹 서버로 접속할 수 있다.
