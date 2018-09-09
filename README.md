@@ -85,7 +85,7 @@ uglified.js파일로 minify되어 새로 생성됨
 1. 설치 명령어를 이용해서 설치한다.
 	> npm install underscore  
 	> npm install underscore --save  
-'--save' : dependencies가 추가되며포함되어 있는 모듈을 쉽게 가져올 수 있음  
+--save : dependencies가 추가되며포함되어 있는 모듈을 쉽게 가져올 수 있음  
 (설명) 일시적으로 사용하는 것들에 대해서는 --save를 빼고 설치한다.  
 프로젝트에 반드시 같이 가지고 다녀야 한다면 --save를 추가해서 설치하고 dependencies안에 추가되어 사용할 수 있다.  
 ![underscore](https://user-images.githubusercontent.com/18157844/45262242-2ff78700-b44e-11e8-8bd5-f7738706b5cd.png)
