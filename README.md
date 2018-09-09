@@ -32,4 +32,8 @@ server.listen(port, hostname, () => {
 1. webserver.js파일을 생성하고 위의 코드를 추가한다. 
 2. node {파일명.js}를 입력하여 웹서버 어플리케이션을 실행시킴
 	> node webserver.js
-2. 브라우저를 통해서 실행시킨 웹 서버로 접속할 수 있다.
+3. http://127.0.0.1:3000 으로 접속하여 실행시킨 웹 서버로 접속할 수 있다.  
+<img width="232" alt="2018-09-09 10 29 45" src="https://user-images.githubusercontent.com/18157844/45260200-67007500-b41b-11e8-92ab-a7ea8c651381.png">
+
+사용자가 브라우저 주소 입력창에서 http://127.0.0.1:3000 을 입력했을 때 hostname(127.0.0.1), port(3000) 정보를 웹 어플리케이션이 Listen하고 있다가 결과를 처리는 것  
+<img width="521" alt="2018-09-09 10 42 29" src="https://user-images.githubusercontent.com/18157844/45260263-2c97d780-b41d-11e8-9b45-5a7ecf01d682.png">
