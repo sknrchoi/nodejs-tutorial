@@ -1,6 +1,12 @@
 # nodejs
 Nodejs Theory and practice
 
+
+[설치하기](#설치하기)  
+[웹 서버 기동시키기](#웹-어플리케이션-만들기)  
+[NPM](#NPM)
+
+
 ## 설치하기
 1. https://nodejs.org 이동한다.
 2. Download버튼을 클릭해서 해당되는 운영체제에 맞는 것을 클릭한다.
@@ -49,8 +55,8 @@ server.listen(port, hostname, () => {
 : http connections을 위한 listening이 시작됨  
 
 
-## NPM (Node Packaged Manager)
- : Node.js로 만들어진 module을 관리해주는 툴로 기존에 만들어진 공개적인 모듈을 설치해서 사용할 수 있다. 더 나아가서 이후 그 모듈이 업데이트 할 경우 의존성이 존재해서 관리하기도 편하다.  
+## NPM
+ : Node Packaged Manager의 약자로 Node.js로 만들어진 module을 관리해주는 툴로 기존에 만들어진 공개적인 모듈을 설치해서 사용할 수 있다. 더 나아가서 이후 그 모듈이 업데이트 할 경우 의존성이 존재해서 관리하기도 편하다.  
 
 ### uglify-js 설치하고 사용하기
 1.https://www.npmjs.com 로 접속해서 uglify-js 검색한다.
