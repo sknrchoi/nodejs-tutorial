@@ -4,7 +4,8 @@ Nodejs Theory and practice
 
 [설치하기](#설치하기)  
 [웹 서버 기동시키기](#웹-어플리케이션-만들기)  
-[NPM](#NPM)
+[NPM](#npm)  
+[Express](#express)
 
 
 ## 설치하기
@@ -115,3 +116,50 @@ console.log('마지막 요소 : ' + _.last(array));
 ~~~
 3. 결과 확인하기
 <img width="156" alt="2018-09-09 4 44 51" src="https://user-images.githubusercontent.com/18157844/45262329-bb254c80-b44f-11e8-87ef-60ce87c87b91.png">
+
+## Express
+> Express는 웹 및 모바일 애플리케이션을 위한 일련의 강력한 기능을 제공하는 간결하고 유연한 Node.js 웹 애플리케이션 프레임워크입니다.
+>> [참조] http://expressjs.com/ko/
+
+### 설치하기
+1. 어플리케이션을 보관할 디렉토리를 생성한다.
+~~~
+# mkdir webserver
+# cd webserver
+~~~
+2. 디렉토리를 패키지화 하기 위해서 npm init 명령어를 이용하여 package.json파일을 생성한다.
+~~~
+# npm init
+// 필요한 정보를 입력한다. (enter로 넘어가면 기본값 설정됨)
+package name: (webserver) 
+version: (1.0.0) 
+description: 
+entry point: (index.js) 
+test command: 
+git repository: 
+keywords: 
+author: 
+license: (ISC) 
+~~~
+3. express를 설치하기 위해 npm install명령어를 이용하여 설치한다. 단, dependencies로 설정되어 프로젝트 내에서 일회성이 아닌 모듈을 포함해서 사용하기 위해 --save 옵션을 주어 express를 설치한다.
+~~~
+# npm install --save express
+~~~
+4. package.json파일에서 express설치를 확인한다.
+~~~
+# cat package.json
+{
+  "name": "webserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
+~~~
