@@ -163,3 +163,90 @@ license: (ISC)
   }
 }
 ~~~
+#### 기본 파일
+: express를 사용해서 웹 어플리케이션을 만들기 위해 기본적으로 app.js 파일을 생성해야한다. app.js는 가장 최초의 진입점이라고 할 수 있는 파일이며 main application이라고 칭한다.
+1. app.js 파일을 생성한다.
+2. 아래의 코드를 작성한다.
+~~~
+var express = require('express');
+var app = express();
+
+app.listen(3000, function() {
+	// 3000 포트로 리슨되면 실행되는 콜백함수
+	console.log('Connected 3000 port!');
+}); // 웹 어플리케이션이 3000 포트를 리슨함
+~~~
+3. app.js를 실행한다.
+~~~
+# node app.js
+Connected 3000 port!
+~~~
+4. localhost:3000 로 접속해서 확인한다.
+<img width="260" alt="2018-09-15 5 09 00" src="https://user-images.githubusercontent.com/18157844/45930075-aab7ba80-bf95-11e8-81da-4f4784e9f977.png">
+
+### 라우트
+: 라우터란 사용자의 요청을 어떤 컨트롤러(요청에 대한 처리)로 전달할지에 대해 결정하는 중간 연결자의 역할을 하는 것을 의미한다.  
+(사용자 - 라우터 - 컨트롤러)
+> 라우팅은 애플리케이션 엔드 포인트(URI)의 정의, 그리고 URI가 클라이언트 요청에 응답하는 방식을 말합니다.
+>> [참조] http://expressjs.com/ko/guide/routing.html
+
++ 기본적인 라우트
+~~~
+var express = require('express');
+var app = express();
+
+// 사용자가 접속하는 방식 (get, post)
+app.get('/', function(req, res) {
+	// 사용자가 home ('/')으로 접속했을 때, 두번째 인자가 실행됨
+
+	// 응답함
+	res.send('Hello home');
+});
+~~~
+<img width="259" alt="2018-09-15 5 13 18" src="https://user-images.githubusercontent.com/18157844/45930027-d25a5300-bf94-11e8-8ea6-48c74fbe4a4f.png">
+
++ 라우트 경로 (루트와 다른 경로)
+~~~
+// 루트 경로
+app.get('/', function(req, res) {
+	res.send('Hello home');
+});
+// login 경로
+app.get('/login', function(req, res) {
+	res.send('<h1>Login please</h1>');
+});
+~~~
+<img width="305" alt="2018-09-15 5 14 32" src="https://user-images.githubusercontent.com/18157844/45930032-e30ac900-bf94-11e8-91cf-d44eb61e5248.png">
+
+### 정적 파일 제공
+> 프로그래밍 적으로 만들어진 정보를 동적이라고 하며 한번 만들어진 것이 언제나 똑같이 보이는 것을 정적이라고 한다. 예) CSS, JavaScript, 이미지 등등
+1. 실행될 nodejs파일과 같은 레벨에 public 폴더를 생성한다.  
+2. 폴더에 이미지 파일을 하나 추가한다. (code.png파일을 public폴더에 추가함)
+3. 다음과 같이 app.js에 public폴더를 정적인 것으로 지정한다는 코드를 작성하고 실행시킨다.
+~~~
+# vi app.js
+
+var express = require('express');
+var app = express();
+
+app.use(express.statuc('public'));
+
+app.listen(3000, function() {
+	console.log('Connected 3000 port!');
+});
+
+# node app.js
+~~~
+4. localhost:3000/code.png 실행 -> 이미지가 보임
+5. 라우트 경로를 통해서 html페이지를 보이고 싶을 때 다음과 같은 코드를 작성하고 실행시킨다.
+~~~
+# vi app.js
+
+app.get('/code', function(req, res) {
+	res.send('Hello world. <img src="/code.png">');
+});
+
+# node app.js
+~~~
+6. localhost:3000/code 실행 -> code.png이미지가 추가된 html페이지가 보임
+<img width="775" alt="2018-09-23 11 55 03" src="https://user-images.githubusercontent.com/18157844/45929507-d8006a80-bf8d-11e8-9c61-e007fe36979d.png">
