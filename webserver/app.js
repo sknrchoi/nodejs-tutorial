@@ -6,6 +6,9 @@
 var express = require('express');
 var app = express();
 
+// public 이라는 폴더를 정적인 것으로 지정하겠다.
+app.use(express.static('public'));
+
 // 사용자가 접속하는 방식 (get, post)
 app.get('/', function(req, res) {
 	// 사용자가 home ('/')으로 접속했을 때, 두번째 인자가 실행됨
@@ -17,6 +20,40 @@ app.get('/', function(req, res) {
 // login 경로로 들어왔을 때 실행됨
 app.get('/login', function(req, res) {
 	res.send('<h1>Login please</h1>');
+});
+
+app.get('/code', function(req, res) {
+	res.send('Hello world. <img src="/code.png">');
+});
+
+// 동적인 페이지
+// ` 는 그레이브라고 불리우며 자바스크립트 안에서 html코드를 추가할 때 묶을 수 있는 표기법이다.
+// 그레이브로 묶은 html문자열 사이에 변수를 넣으려면 ${변수명}으로 사용한다.
+// 아래의 코드가 추가되면 node app.js로 다시 재실행 후 확인할 수 있다.(이미 기동중에 코드가 수정된다면 재기동 전까지 반영되지 않음) 
+app.get('/dynamic', function(req, res) {
+	var lis = '';
+	for (var i=0; i<5; i++) {
+		lis = lis + '<li>dynamic</li>';
+	}
+
+	var time = Date();
+	var output = `
+	<!DOCTYPE html>
+	  <html>
+	    <head>
+	      <meta charset="utf-8">
+	      <title></title>
+	    </head>
+	    <body>
+	        Hello, Dynamic!
+	        <ul>
+	          ${lis}
+	        </ul>
+	        ${time}
+	    </body>
+	  </html>`;
+
+	  res.send(output);
 });
 
 app.listen(3000, function() {
