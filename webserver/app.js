@@ -6,8 +6,23 @@
 var express = require('express');
 var app = express();
 
+app.locals.pretty=true;
+// 템플릿 엔진과 애플리케이션인 express를 연결함
+app.set('view engine', 'jade');
+// 템플릿이 있는 디렉토리를 설정함
+// express는 기본적으로 views라는 폴더를 찾도록 기본값이 지정되어있음
+app.set('views', './views');
+
 // public 이라는 폴더를 정적인 것으로 지정하겠다.
 app.use(express.static('public'));
+
+app.get('/template', function(req, res) {
+	// 기본적으로 사용하던 것
+	// res.send()
+	// 템플릿 파일을 웹페이지로 렌더링해서 전송
+	// 두번째 인자를 jade템플릿에 전달해서 변수로 사용할 수 있음.
+	res.render('temp', {time: Date(), _title: 'jade template'});
+});
 
 // 사용자가 접속하는 방식 (get, post)
 app.get('/', function(req, res) {
