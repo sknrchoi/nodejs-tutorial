@@ -60,24 +60,34 @@ server.listen(port, hostname, () => {
  : Node Packaged Manager의 약자로 Node.js로 만들어진 module을 관리해주는 툴로 기존에 만들어진 공개적인 모듈을 설치해서 사용할 수 있다. 더 나아가서 이후 그 모듈이 업데이트 할 경우 의존성이 존재해서 관리하기도 편하다.  
 
 ### uglify-js 설치하고 사용하기
-1.https://www.npmjs.com 로 접속해서 uglify-js 검색한다.
+1. https://www.npmjs.com 로 접속해서 uglify-js 검색한다.
 2. 설치 명령어를 이용해서 설치한다.
-	> npm install uglify-js -g
-global이 불을 때 : 컴퓨터 전역에서 사용하는 독립적인 소프트웨어로 사용됨
-	> npm install uglify-js
-global이 안 붙을 때 : 패키지를 설치하는 프로젝트 안에서 부품으로 사용됨  
+- global이 불을 때 : 컴퓨터 전역에서 사용하는 독립적인 소프트웨어로 사용됨
+~~~
+npm install uglify-js -g
+~~~
+- global이 안 붙을 때 : 패키지를 설치하는 프로젝트 안에서 부품으로 사용됨 
+~~~
+npm install uglify-js
+~~~ 
 <img width="550" alt="2018-09-09 3 52 43" src="https://user-images.githubusercontent.com/18157844/45262036-4cdd8b80-b449-11e8-9b46-813a6c0f82f8.png">
 
 3. js파일을 만들어서 코드를 입력한다.
 <img width="306" alt="2018-09-09 3 58 45" src="https://user-images.githubusercontent.com/18157844/45262041-5ff05b80-b449-11e8-99f6-cb7122156d3e.png">
 
 4. uglifyjs 명령어로 모듈을 실행한다.
-	> uglifyjs pretty.js
-4행으로 되어있던 코드가 한줄로 변경됨
-	> uglifyjs pretty.js -m
-name이라는 지역변수가 l로 변경됨
-	> uglifyjs pretty.js -o uglified.js -m
-uglified.js파일로 minify되어 새로 생성됨  
+~~~
+uglifyjs pretty.js
+~~~
+-> 4행으로 되어있던 코드가 한줄로 변경됨
+~~~
+uglifyjs pretty.js -m
+~~~
+-> name이라는 지역변수가 l로 변경됨
+~~~
+uglifyjs pretty.js -o uglified.js -m
+~~~
+-> uglified.js파일로 minify되어 새로 생성됨  
 <img width="436" alt="2018-09-09 4 01 29" src="https://user-images.githubusercontent.com/18157844/45262079-f290fa80-b449-11e8-9b0f-25b9f15abcea.png">
 
 ### 프로젝트를 패키지화 하기
