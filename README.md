@@ -250,3 +250,44 @@ app.get('/code', function(req, res) {
 ~~~
 6. localhost:3000/code 실행 -> code.png이미지가 추가된 html페이지가 보임
 <img width="775" alt="2018-09-23 11 55 03" src="https://user-images.githubusercontent.com/18157844/45929507-d8006a80-bf8d-11e8-9c61-e007fe36979d.png">
+
+### 동적인 웹페이지 제공
+: 동적인 페이지는 프로그래밍 적으로 코드의 수정이 있으면 다시 node app.js로 재실행 후 결과를 확인할 수 있다. 다시 말해서, 이미 기동중인 코드가 수정된다면 재기동 전까지 반영되지 않는다.
+1. app.js에 아래와 같은 코드를 추가한 후 다시 실행시킨다.
+~~~
+# vi app.js
+
+app.get('/dynamic', function(req, res) {
+        var lis = '';
+        for (var i=0; i<5; i++) {
+                lis = lis + '<li>dynamic</li>';
+        }
+
+        var time = Date();
+        var output = `
+        <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title></title>
+            </head>
+            <body>
+                Hello, Dynamic!
+                <ul>
+                  ${lis}
+                </ul>
+                ${time}
+            </body>
+          </html>`;
+
+          res.send(output);
+});
+
+# node app.js
+~~~
++ `는 그레이브라고 불리우며 자바스크립트 안에서 html코드를 추가할 때 묶을 수 있는 표기법이다.  
+(mac에서 그레이브는 option + ~ 을 입력해서 사용함)
++ 그레이브로 묶은 html문자열 사이에 변수를 넣으려면 ${변수명}으로 사용한다.
+
+2. 결과를 확인한다.
+<img width="347" alt="2018-09-24 4 18 14" src="https://user-images.githubusercontent.com/18157844/46078968-acb98d80-c1d0-11e8-9fa4-128e5b75993e.png">
