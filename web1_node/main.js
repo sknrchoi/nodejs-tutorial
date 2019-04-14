@@ -1,19 +1,45 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
- 
+var qs = require('querystring');
+
+function templateHTML(title, list, description, controll) {
+    return `
+        <!doctype html>
+        <html>
+            <head>
+                <title>WEB1 - ${title}</title>
+                <meta charset="utf-8">
+            </head>
+            <body>
+                <h1><a href="/">WEB</a></h1>
+                ${list}
+                ${controll}
+                ${description}
+            </body>
+        </html>
+    `;
+}
+
+function telplateList(fileList) {
+    var list = '<ul>';
+
+    var i = 0;
+    while(i < fileList.length) {
+        list = list + `<li><a href="/?id=${fileList[i]}">${fileList[i]}</a></li>`;
+        i ++;
+    }
+    list = list + '</ul>';
+
+    return list;
+}
+
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
-    /*if(_url == '/'){
-      title = 'Welcome';
-    }
-    if(_url == '/favicon.ico'){
-      return response.writeHead(404);
-    }*/
-
-    console.log(url.parse(_url, true).pathname);
+    
+    console.log("pathname : " + pathname);
 
     if (pathname === '/') {
         if (queryData.id === undefined) {
@@ -23,40 +49,10 @@ var app = http.createServer(function(request,response){
                 
                 var title = 'Welcome';
                 var description = 'Hello node js';
-                /*var list = `<ul>
-                    <li><a href="/?id=HTML">HTML</a></li>
-                    <li><a href="/?id=CSS">CSS</a></li>
-                    <li><a href="/?id=JavaScript">JavaScript</a></li>
-                </ul>`;*/
-                var list = '<ul>';
-                
-                var i = 0;
-                while(i < filelist.length) {
-                    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
-                    i = i + 1;
-                }
-                list = list + '</ul>';
-
-                var template = `
-                <!doctype html>
-                <html>
-                <head>
-                <title>WEB1 - ${title}</title>
-                <meta charset="utf-8">
-                </head>
-                <body>
-                <h1><a href="/">WEB</a></h1>
-                ${list}
-                <h2>${title}</h2>
-                <p><a href="https://www.w3.org/TR/html5/" target="_blank" title="html5 speicification">Hypertext Markup Language (HTML)</a> is the standard markup language for <strong>creating <u>web</u> pages</strong> and web applications.Web browsers receive HTML documents from a web server or from local storage and render them into multimedia web pages. HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.
-                <img src="coding.jpg" width="100%">
-                </p>
-                <p style="margin-top:45px;">
-                    ${description}
-                </p>
-                </body>
-                </html>
-                `;
+                var list = telplateList(filelist);
+                var template = templateHTML(title, list,
+                    `<h2>${title}</h2>${description}`,
+                    `<a href="/create">create</a>`);
                 response.writeHead(200);   
                 response.end(template);
 
@@ -64,51 +60,121 @@ var app = http.createServer(function(request,response){
             
         } else {
             fs.readdir('./data', function(error, filelist) {
-                /*var list = `<ul>
-                    <li><a href="/?id=HTML">HTML</a></li>
-                    <li><a href="/?id=CSS">CSS</a></li>
-                    <li><a href="/?id=JavaScript">JavaScript</a></li>
-                </ul>`;*/
-                var list = '<ul>';
-                
-                var i = 0;
-                while(i < filelist.length) {
-                    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`
-                    i = i + 1;
-                }
-                list = list + '</ul>';
-                
                 fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description) {
                     var title = queryData.id;
-                    var template = `
-                    <!doctype html>
-                    <html>
-                    <head>
-                    <title>WEB1 - ${title}</title>
-                    <meta charset="utf-8">
-                    </head>
-                    <body>
-                    <h1><a href="/">WEB</a></h1>
-                    ${list}
-                    <h2>${title}</h2>
-                    <p><a href="https://www.w3.org/TR/html5/" target="_blank" title="html5 speicification">Hypertext Markup Language (HTML)</a> is the standard markup language for <strong>creating <u>web</u> pages</strong> and web applications.Web browsers receive HTML documents from a web server or from local storage and render them into multimedia web pages. HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.
-                    <img src="coding.jpg" width="100%">
-                    </p>
-                    <p style="margin-top:45px;">
-                        ${description}
-                    </p>
-                    </body>
-                    </html>
-                    `;
+                    var list = telplateList(filelist);
+                    var template = templateHTML(title, list, `<h2>${title}</h2>${description}`,
+                    `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`);
                     response.writeHead(200);   
                     response.end(template);
                 });            
             });
         }
         
+    } else if(pathname === '/create') {
+            
+        fs.readdir('./data', function(error, filelist) {
+            console.log(filelist);
+            
+            var title = 'WEB - create';
+            var list = telplateList(filelist);
+            var description = `
+                <form action="http://localhost:3000/process_create" method="post">
+                    <p><input type="text" name="title" placeholder="title"></p>
+                    <p>
+                        <textarea name="description" placeholder="description"></textarea>
+                    </p>
+                    <p>
+                        <input type="submit">
+                    </p>
+                </form>
+            `;
+            var template = templateHTML(title, list, description, '');
+
+            response.writeHead(200);   
+            response.end(template);
+
+        })
+    } else if(pathname === '/process_create') {
+        var body = "";
+        // data이벤트에서 발생시킨 청크는 buffer로 문자열 데이터임.
+        request.on('data', function(data) {
+            body = body + data;
+        });
+        // 위에서 수집한 데이터를 파싱해서 body데이터를 가져옴.
+        request.on('end', function() {
+            var post = qs.parse(body);
+            // post == { title: '3243', description: '24234234' }
+            var title = post.title;
+            var description = post.description;
+            console.log(post);
+            
+            // file write
+            fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
+                console.log('[info] file write success');
+                response.writeHead(200);
+                // redirection
+                response.writeHead(302, {Location : `/?id=${title}`});
+                response.end('success'); // response to client
+            })
+
+        });
+    } else if(pathname === '/update') {
+        fs.readdir('./data', function(error, filelist) {
+            fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description) {
+                var title = queryData.id;
+                var list = telplateList(filelist);
+                var description = `
+                    <form action="/process_update" method="post">
+                        <input type="hidden" name="id" value="${title}">
+                        <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+                        <p>
+                            <textarea name="description" placeholder="description">
+                                ${description}
+                            </textarea>
+                        </p>
+                        <p>
+                            <input type="submit">
+                        </p>
+                    </form>
+                `;
+                var template = templateHTML(title, list, description, '');
+    
+                response.writeHead(200);   
+                response.end(template);
+            });
+        })
+    } else if(pathname === '/process_update') {
+        var body = "";
+        // data이벤트에서 발생시킨 청크는 buffer로 문자열 데이터임.
+        request.on('data', function(data) {
+            body = body + data;
+        });
+        // 위에서 수집한 데이터를 파싱해서 body데이터를 가져옴.
+        request.on('end', function() {
+            var post = qs.parse(body);
+            var id = post.id;
+            var title = post.title;
+            var description = post.description;
+            console.log(post);
+            
+            fs.rename(`data/${id}`, `data/${title}`, 
+            function(error) {
+                // file write
+                fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
+                    console.log('[info] file write success');
+                    response.writeHead(200);
+                    // redirection
+                    response.writeHead(302, {Location : `/?id=${title}`});
+                    response.end('success'); // response to client
+                })
+            });
+
+        });
     } else {   
         response.writeHead(404);   
         response.end('Not found');
-    }   
+    }
 });
+
 app.listen(3000);
