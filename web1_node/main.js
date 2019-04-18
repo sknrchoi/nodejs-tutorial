@@ -22,7 +22,7 @@ var template = {
             </html>
         `;
     },
-    list : function telplateList(fileList) {
+    list : function (fileList) {
         var list = '<ul>';
     
         var i = 0;
