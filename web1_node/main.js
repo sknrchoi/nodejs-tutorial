@@ -106,7 +106,7 @@ var app = http.createServer(function(request,response){
         
     } else if(pathname === '/create') {
             
-        fs.readdir('./data', function(error, filelist) {
+       /*fs.readdir('./data', function(error, filelist) {
             console.log(filelist);
             
             var title = 'WEB - create';
@@ -127,7 +127,27 @@ var app = http.createServer(function(request,response){
             response.writeHead(200);   
             response.end(html);
 
-        })
+        })*/
+
+        db.query(`SELECT * FROM topic`, function(error, topics) {
+            console.log(topics);
+            var title = 'WEB - create';
+            var list = template.list(topics);
+            var html = template.html(title, list,
+                `<form action="http://localhost:3000/process_create" method="post">
+                    <p><input type="text" name="title" placeholder="title"></p>
+                    <p>
+                        <textarea name="description" placeholder="description"></textarea>
+                    </p>
+                    <p>
+                        <input type="submit">
+                    </p>
+                </form>`,
+                ``);
+            response.writeHead(200);   
+            response.end(html);
+        });
+
     } else if(pathname === '/process_create') {
         var body = "";
         // data이벤트에서 발생시킨 청크는 buffer로 문자열 데이터임.
@@ -138,18 +158,26 @@ var app = http.createServer(function(request,response){
         request.on('end', function() {
             var post = qs.parse(body);
             // post == { title: '3243', description: '24234234' }
-            var title = post.title;
-            var description = post.description;
             console.log(post);
             
             // file write
-            fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
+            /*fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
                 console.log('[info] file write success');
                 response.writeHead(200);
                 // redirection
                 response.writeHead(302, {Location : `/?id=${title}`});
                 response.end('success'); // response to client
-            })
+            })*/
+
+            db.query(`INSERT INTO topic (title, description, created, author_id) VALUES(?, ?, NOW(), ?)`, 
+            [post.title, post.description, 1], function(error, result) {
+                if(error) {
+                    throw error;
+                }
+                
+                response.writeHead(302, {Location: `/?id=${result.insertId}`});   
+                response.end();
+            });
 
         });
     } else if(pathname === '/update') {
