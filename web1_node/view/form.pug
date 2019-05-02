@@ -1,0 +1,9 @@
+extends layout.pug
+
+block content
+    //- raw html을 인자로 받아서 그대로 렌더링 하기 위해 사용한 문법 : | !{form}
+    | !{form}
+
+    if id
+        a(href='/create') create &nbsp;
+        a(href='/update?id=' + id) update

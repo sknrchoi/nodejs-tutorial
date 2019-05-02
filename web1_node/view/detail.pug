@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+    h2 #{title}
+    | #{description}
+    br
+    p by #{topic.name}
+    a(href='/create') create &nbsp;
+    a(href='/update?id=' + id) update
+    form(action='/delete_process', method='post')
+        input(type='hidden', name='id', value=id)
+        input(type='submit', value='delete')

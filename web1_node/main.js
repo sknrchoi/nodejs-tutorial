@@ -1,6 +1,10 @@
 var topic = require('./lib/topic');
+var path = require('path');
 var express = require('express');
 var app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'view'));
 
 app.get('/', (request, response) => {
     if (request.query.id === undefined) {
