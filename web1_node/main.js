@@ -1,33 +1,43 @@
-var http = require('http');
-var url = require('url');
 var topic = require('./lib/topic');
+var express = require('express');
+var app = express();
 
-var app = http.createServer(function (request, response) {
-    var _url = request.url;
-    var queryData = url.parse(_url, true).query;
-    var pathname = url.parse(_url, true).pathname;
-
-    if (pathname === '/') {
-
-        if (queryData.id === undefined) {
-            topic.home(request, response);
-        } else {
-            topic.page(request, response);
-        }
-    } else if (pathname === '/create') {
-        topic.create(request, response);
-    } else if (pathname === '/process_create') {
-        topic.create_process(request, response);
-    } else if (pathname === '/update') {
-        topic.update(request, response);
-    } else if (pathname === '/process_update') {
-        topic.update_process(request, response);
-    } else if (pathname === '/delete_process') {
-        topic.delete(request, response);
+app.get('/', (request, response) => {
+    if (request.query.id === undefined) {
+        topic.home(request, response);
     } else {
-        response.writeHead(404);
-        response.end('Not found');
+        topic.page(request, response);
     }
+});
+
+app.get('/create', (request, response) => {
+    topic.create(request, response);
+});
+
+app.post('/process_create', (request, response) => {
+    topic.create_process(request, response);
+});
+
+app.get('/update', (request, response) => {
+    topic.update(request, response);
+});
+
+app.post('/process_update', (request, response) => {
+    topic.update_process(request, response);
+});
+
+app.get('/delete_process', (request, response) => {
+    topic.delete(request, response);
+});
+
+// Route error event handler
+app.use((request, response, next) => {
+    throw new Error(request.url + ' Not Found');
+});
+
+app.use((error, request, response, next) => {
+    console.log(error);
+    response.send(error.message);
 });
 
 app.listen(3000);
