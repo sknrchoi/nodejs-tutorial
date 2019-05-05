@@ -7,7 +7,7 @@ exports.home = function (request, response) {
         var title = 'Welcome';
         var description = 'Hello node js';
 
-        response.render('common', {
+        response.render('index', {
             title : title,
             description : description,
             topics : topics
