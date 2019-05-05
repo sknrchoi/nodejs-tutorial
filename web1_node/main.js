@@ -1,4 +1,5 @@
 var topic = require('./lib/topic');
+var author = require('./lib/author');
 var path = require('path');
 var express = require('express');
 var app = express();
@@ -32,6 +33,10 @@ app.post('/process_update', (request, response) => {
 
 app.get('/delete_process', (request, response) => {
     topic.delete(request, response);
+});
+
+app.get('/author', (request, response) => {
+    author.home(request, response);
 });
 
 // Route error event handler

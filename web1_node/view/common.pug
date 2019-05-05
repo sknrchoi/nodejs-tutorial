@@ -4,4 +4,8 @@ block content
     h2 #{title}
     a(href='/create') create
     br
-    | #{description}
+
+    if description
+        | #{description}
+    else if html
+        | !{html}
