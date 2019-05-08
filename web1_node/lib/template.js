@@ -1,3 +1,5 @@
+var sanitizeHtml = require('sanitize-html');
+
 // refactoring
 module.exports = {
     authorSelect : function (authors, author_id) {
@@ -9,7 +11,7 @@ module.exports = {
             if (authors[i].id === author_id) {
                 selected = 'selected';
             }
-            tag += `<option value="${authors[i].id}" ${selected}>${authors[i].name}</option>`;
+            tag += `<option value="${authors[i].id}" ${selected}>${sanitizeHtml(authors[i].name)}</option>`;
             i++;
         }
 

@@ -1,5 +1,7 @@
 var db = require('./db');
 var qs = require('querystring');
+var sanitize = require('./sanitize');
+var sanitizeHtml = require('sanitize-html');
 
 exports.home = function (request, response) {
     db.query(`SELECT * FROM topic`, function(error, topics) {
@@ -19,8 +21,8 @@ exports.home = function (request, response) {
             `;
             response.render('author', {
                 title,
-                authors,
-                topics,
+                authors : sanitize.authorDatafilter(authors),
+                topics : sanitize.topicDatafilter(topics),
                 form
             });
         });
@@ -67,9 +69,9 @@ exports.update = function(request, response) {
                 var form = `
                     <form action="/author/process_update" method="post">
                         <input type="hidden" name="id" value="${author[0].id}">
-                        <p><input type="text" name="name" placeholder="name" value="${author[0].name}"></p>
+                        <p><input type="text" name="name" placeholder="name" value="${sanitizeHtml(author[0].name)}"></p>
                         <p>
-                            <textarea name="profile" placeholder="profile">${author[0].profile}</textarea>
+                            <textarea name="profile" placeholder="profile">${sanitizeHtml(author[0].profile)}</textarea>
                         </p>
                         <p>
                             <input type="submit" value="update">
@@ -78,8 +80,8 @@ exports.update = function(request, response) {
                 `;
                 response.render('author', {
                     title,
-                    authors,
-                    topics,
+                    authors : sanitize.authorDatafilter(authors),
+                    topics : sanitize.topicDatafilter(topics),
                     form
                 });
             });

@@ -1,6 +1,8 @@
 var db = require('./db');
 var template = require('./template');
 var qs = require('querystring');
+var sanitize = require('./sanitize');
+var sanitizeHtml = require('sanitize-html');
 
 exports.home = function (request, response) {
     db.query(`SELECT * FROM topic`, function(error, topics) {
@@ -10,7 +12,7 @@ exports.home = function (request, response) {
         response.render('index', {
             title : title,
             description : description,
-            topics : topics
+            topics : sanitize.topicDatafilter(topics)
         });
     });
 }
@@ -22,7 +24,6 @@ exports.page = function (request, response) {
         if(error) {
             throw error;
         }
-        console.log('topics = ', topics);
 
         db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?`,[queryData.id] ,function(error2, topic) {
             if(error2) {
@@ -31,15 +32,16 @@ exports.page = function (request, response) {
             
             console.log('topic = ', topic);
 
-            var title = topic[0].title;
-            var description = topic[0].description;
-           
+            var title = sanitizeHtml(topic[0].title);
+            var description = sanitizeHtml(topic[0].description);
+            var authorName = sanitizeHtml(topic[0].name);
+            
             response.render('detail', {
                 title : title,
                 id : queryData.id,
                 description : description,
-                topics : topics,
-                topic : topic[0]
+                topics : sanitize.topicDatafilter(topics),
+                authorName : authorName
             });
         });
     });
@@ -65,7 +67,7 @@ exports.create = function(request, response) {
             `;
             response.render('form', {
                 title : title,
-                topics : topics,
+                topics : sanitize.topicDatafilter(topics),
                 form
             });
         });
@@ -109,13 +111,13 @@ exports.update = function(request, response) {
             }
 
             db.query(`SELECT * FROM author`,[queryData.id] ,function(error2, authors) {
-                var title = topic[0].title;
+                var title = sanitizeHtml(topic[0].title);
                 var form = `
                 <form action="/process_update" method="post">
                     <input type="hidden" name="id" value="${topic[0].id}">
-                    <p><input type="text" name="title" placeholder="title" value="${topic[0].title}"></p>
+                    <p><input type="text" name="title" placeholder="title" value="${sanitizeHtml(topic[0].title)}"></p>
                     <p>
-                        <textarea name="description" placeholder="description">${topic[0].description}</textarea>
+                        <textarea name="description" placeholder="description">${sanitizeHtml(topic[0].description)}</textarea>
                     </p>
                     <p>
                         ${template.authorSelect(authors, topic[0].author_id)}
@@ -128,7 +130,7 @@ exports.update = function(request, response) {
                 response.render('form', {
                     title : title,
                     id : topic[0].id,
-                    topics : topics,
+                    topics : sanitize.topicDatafilter(topics),
                     form
                 });
             });
