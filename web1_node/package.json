@@ -7,6 +7,8 @@
     "lib": "lib"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
     "express": "^4.16.4",
     "mysql": "^2.17.1",
     "pug": "^2.0.3",

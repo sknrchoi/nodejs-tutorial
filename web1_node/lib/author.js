@@ -1,5 +1,4 @@
 var db = require('./db');
-var qs = require('querystring');
 var sanitize = require('./sanitize');
 var sanitizeHtml = require('sanitize-html');
 
@@ -30,29 +29,22 @@ exports.home = function (request, response) {
 }
 
 exports.create_process = function(request, response) {
-    var body = "";
+    var author = request.body;
+    console.log('create author data = ', author);
 
-    request.on('data', function(data) {
-        body = body + data;
-    });
-
-    request.on('end', function() {
-        var author = qs.parse(body);
-
-        db.query(`INSERT INTO author (name, profile) VALUES(?, ?)`, 
-        [author.name, author.profile], function(error, result) {
-            if(error) {
-                throw error;
-            }
-            
-            response.redirect(`/author`);
-            response.end();
-        });
+    db.query(`INSERT INTO author (name, profile) VALUES(?, ?)`, 
+    [author.name, author.profile], function(error, result) {
+        if(error) {
+            throw error;
+        }
+        
+        response.redirect(`/author`);
+        response.end();
     });
 }
 
 exports.update = function(request, response) {
-    var queryData = request.query;
+    var authorId = request.params.authorId;
 
     db.query(`SELECT * FROM topic`, function(error, topics) {
         if(error) {
@@ -64,7 +56,7 @@ exports.update = function(request, response) {
                 throw error2;
             }
 
-            db.query(`SELECT * FROM author WHERE id=?`,[queryData.id] ,function(error3, author) {
+            db.query(`SELECT * FROM author WHERE id=?`,[authorId] ,function(error3, author) {
                 var title = 'author';
                 var form = `
                     <form action="/author/process_update" method="post">
@@ -90,45 +82,30 @@ exports.update = function(request, response) {
 }
 
 exports.update_process = function(request, response) {
-    var body = "";
+    var author = request.body;
+    console.log('update author data = ', author);
 
-    request.on('data', function(data) {
-        body = body + data;
-    });
-
-    request.on('end', function() {
-        var author = qs.parse(body);
-
-        db.query(`UPDATE author SET name=?, profile=? WHERE id=?`, 
+    db.query(`UPDATE author SET name=?, profile=? WHERE id=?`, 
         [author.name, author.profile, author.id], function(error, result) {
             response.redirect(`/author`);
         });
-    });
 }
 
 exports.delete = function(request, response) {
-    var body = "";
+    var author = request.body;
+    
+    db.query(`DELETE FROM topic WHERE author_id=?`,
+    [author.id], function (error, result) {
+        if (error) {
+            throw error;
+        }
 
-    request.on('data', function (data) {
-        body = body + data;
-    });
-
-    request.on('end', function () {
-        var author = qs.parse(body);
-
-        db.query(`DELETE FROM topic WHERE author_id=?`,
-        [author.id], function (error, result) {
-            if (error) {
-                throw error;
+        db.query(`DELETE FROM author WHERE id=?`,
+        [author.id], function (error2, result) {
+            if (error2) {
+                throw error2;
             }
-
-            db.query(`DELETE FROM author WHERE id=?`,
-            [author.id], function (error2, result) {
-                if (error2) {
-                    throw error2;
-                }
-                response.redirect(`/author`);
-            });
+            response.redirect(`/author`);
         });
     });
 }

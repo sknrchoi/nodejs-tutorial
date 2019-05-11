@@ -1,6 +1,5 @@
 var db = require('./db');
 var template = require('./template');
-var qs = require('querystring');
 var sanitize = require('./sanitize');
 var sanitizeHtml = require('sanitize-html');
 
@@ -18,14 +17,14 @@ exports.home = function (request, response) {
 }
 
 exports.page = function (request, response) {
-    var queryData = request.query;
+    var pageId = request.params.pageId;
 
     db.query(`SELECT * FROM topic`, function(error, topics) {
         if(error) {
             throw error;
         }
 
-        db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?`,[queryData.id] ,function(error2, topic) {
+        db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?`,[pageId] ,function(error2, topic) {
             if(error2) {
                 throw error2;
             }
@@ -38,7 +37,7 @@ exports.page = function (request, response) {
             
             response.render('detail', {
                 title : title,
-                id : queryData.id,
+                id : pageId,
                 description : description,
                 topics : sanitize.topicDatafilter(topics),
                 authorName : authorName
@@ -75,42 +74,34 @@ exports.create = function(request, response) {
 }
 
 exports.create_process = function(request, response) {
-    var body = "";
-    // data이벤트에서 발생시킨 청크는 buffer로 문자열 데이터임.
-    request.on('data', function(data) {
-        body = body + data;
-    });
+    var post = request.body;
+    console.log('create post data = ', post);
+    // post == { title: '3243', description: '24234234' }
 
-    // 위에서 수집한 데이터를 파싱해서 body데이터를 가져옴.
-    request.on('end', function() {
-        var post = qs.parse(body);
-        // post == { title: '3243', description: '24234234' }
-
-        db.query(`INSERT INTO topic (title, description, created, author_id) VALUES(?, ?, NOW(), ?)`, 
-        [post.title, post.description, post.author], function(error, result) {
-            if(error) {
-                throw error;
-            }
-            
-            response.redirect(`/?id=${result.insertId}`);
-        });
+    db.query(`INSERT INTO topic (title, description, created, author_id) VALUES(?, ?, NOW(), ?)`, 
+    [post.title, post.description, post.author], function(error, result) {
+        if(error) {
+            throw error;
+        }
+        
+        response.redirect(`/?id=${result.insertId}`);
     });
 }
 
 exports.update = function(request, response) {
-    var queryData = request.query;
+    var pageId = request.params.pageId;
 
     db.query(`SELECT * FROM topic`, function(error, topics) {
         if(error) {
             throw error;
         }
         
-        db.query(`SELECT * FROM topic WHERE id=?`,[queryData.id] ,function(error2, topic) {
+        db.query(`SELECT * FROM topic WHERE id=?`,[pageId] ,function(error2, topic) {
             if(error2) {
                 throw error2;
             }
 
-            db.query(`SELECT * FROM author`,[queryData.id] ,function(error2, authors) {
+            db.query(`SELECT * FROM author`,[pageId] ,function(error2, authors) {
                 var title = sanitizeHtml(topic[0].title);
                 var form = `
                 <form action="/process_update" method="post">
@@ -139,40 +130,22 @@ exports.update = function(request, response) {
 }
 
 exports.update_process = function(request, response) {
-    var body = "";
-    // data이벤트에서 발생시킨 청크는 buffer로 문자열 데이터임.
-    request.on('data', function(data) {
-        body = body + data;
-    });
-    // 위에서 수집한 데이터를 파싱해서 body데이터를 가져옴.
-    request.on('end', function() {
-        var post = qs.parse(body);
+    var post = request.body;
 
-        db.query(`UPDATE topic SET title=?, description=?, created=NOW(), author_id=? WHERE id=?`, 
-        [post.title, post.description, post.author, post.id], function(error, result) {
-            response.redirect(`/?id=${post.id}`);
-        });
+    db.query(`UPDATE topic SET title=?, description=?, created=NOW(), author_id=? WHERE id=?`, 
+    [post.title, post.description, post.author, post.id], function(error, result) {
+        response.redirect(`/?id=${post.id}`);
     });
 }
 
 exports.delete = function(request, response) {
-    var body = "";
+    var post = request.body;
 
-    // data이벤트에서 발생시킨 청크는 buffer로 문자열 데이터임.
-    request.on('data', function (data) {
-        body = body + data;
-    });
-
-    // 위에서 수집한 데이터를 파싱해서 body데이터를 가져옴.
-    request.on('end', function () {
-        var post = qs.parse(body);
-
-        db.query(`DELETE FROM topic WHERE id=?`,
-            [post.id], function (error, result) {
-                if (error) {
-                    throw error;
-                }
-                response.redirect(`/`);
-            });
-    });
+    db.query(`DELETE FROM topic WHERE id=?`,
+        [post.id], function (error, result) {
+            if (error) {
+                throw error;
+            }
+            response.redirect(`/`);
+        });
 }

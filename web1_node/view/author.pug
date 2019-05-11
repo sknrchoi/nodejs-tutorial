@@ -9,7 +9,7 @@ block content
                 td #{author.name}
                 td #{author.profile}
                 td
-                    a(href='/author/update?id=' + author.id) update
+                    a(href='/author/update/' + author.id) update
                 td
                     form(action='/author/delete', method='post')
                         input(type='hidden', name='id', value=author.id)

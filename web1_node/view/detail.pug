@@ -6,7 +6,7 @@ block content
     br
     p by #{authorName}
     a(href='/create') create &nbsp;
-    a(href='/update?id=' + id) update
+    a(href='/update/' + id) update
     form(action='/delete_process', method='post')
         input(type='hidden', name='id', value=id)
         input(type='submit', value='delete')

@@ -3,16 +3,22 @@ var author = require('./lib/author');
 var path = require('path');
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
+var compression = require('compression');
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(compression());
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'view'));
 
 app.get('/', (request, response) => {
-    if (request.query.id === undefined) {
-        topic.home(request, response);
-    } else {
-        topic.page(request, response);
-    }
+    topic.home(request, response);
+});
+
+app.get('/page/:pageId', (request, response) => {
+    topic.page(request, response);
+
 });
 
 app.get('/create', (request, response) => {
@@ -23,7 +29,7 @@ app.post('/process_create', (request, response) => {
     topic.create_process(request, response);
 });
 
-app.get('/update', (request, response) => {
+app.get('/update/:pageId', (request, response) => {
     topic.update(request, response);
 });
 
@@ -43,7 +49,7 @@ app.post('/author/process_create', (request, response) => {
     author.create_process(request, response);
 });
 
-app.get('/author/update', (request, response) => {
+app.get('/author/update/:authorId', (request, response) => {
     author.update(request, response);
 });
 
