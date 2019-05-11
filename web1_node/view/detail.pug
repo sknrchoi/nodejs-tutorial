@@ -5,8 +5,8 @@ block content
     | #{description}
     br
     p by #{authorName}
-    a(href='/create') create &nbsp;
-    a(href='/update/' + id) update
-    form(action='/delete_process', method='post')
+    a(href='/topic/create') create &nbsp;
+    a(href='/topic/update/' + id) update
+    form(action='/topic/delete_process', method='post')
         input(type='hidden', name='id', value=id)
         input(type='submit', value='delete')

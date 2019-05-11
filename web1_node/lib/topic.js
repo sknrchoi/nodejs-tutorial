@@ -51,7 +51,7 @@ exports.create = function(request, response) {
         db.query(`SELECT * FROM author`, function(error2, authors) {
             var title = 'WEB - create';
             var form = `
-            <form action="/process_create" method="post">
+            <form action="/topic/process_create" method="post">
                 <p><input type="text" name="title" placeholder="title"></p>
                 <p>
                     <textarea name="description" placeholder="description"></textarea>
@@ -84,7 +84,7 @@ exports.create_process = function(request, response) {
             throw error;
         }
         
-        response.redirect(`/?id=${result.insertId}`);
+        response.redirect(`/topic/page/${result.insertId}`);
     });
 }
 
@@ -104,7 +104,7 @@ exports.update = function(request, response) {
             db.query(`SELECT * FROM author`,[pageId] ,function(error2, authors) {
                 var title = sanitizeHtml(topic[0].title);
                 var form = `
-                <form action="/process_update" method="post">
+                <form action="/topic/process_update" method="post">
                     <input type="hidden" name="id" value="${topic[0].id}">
                     <p><input type="text" name="title" placeholder="title" value="${sanitizeHtml(topic[0].title)}"></p>
                     <p>
@@ -134,7 +134,7 @@ exports.update_process = function(request, response) {
 
     db.query(`UPDATE topic SET title=?, description=?, created=NOW(), author_id=? WHERE id=?`, 
     [post.title, post.description, post.author, post.id], function(error, result) {
-        response.redirect(`/?id=${post.id}`);
+        response.redirect(`/topic/page/${post.id}`);
     });
 }
 
