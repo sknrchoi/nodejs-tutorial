@@ -6,6 +6,7 @@ var compression = require('compression');
 var topicRouter = require('./route/topic');
 var authorRouter = require('./route/author');
 var indexRouter = require('./route/index');
+var authRouter = require('./route/auth');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
@@ -16,6 +17,7 @@ app.set('views', path.join(__dirname, 'view'));
 app.use('/topic', topicRouter);
 app.use('/author', authorRouter);
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 
 // Route error event handler
 app.use((request, response, next) => {
