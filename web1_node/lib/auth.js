@@ -1,12 +1,6 @@
 var db = require('./db');
 var sanitize = require('./sanitize');
 
-var authData = {
-    email : 'test@test.com',
-    password : '123456',
-    nickname : 'testuser'
-};
-
 exports.login = function (request, response) {
     db.query(`SELECT * FROM topic`, function(error, topics) {
         var title = 'WEB - login';
@@ -31,13 +25,19 @@ exports.login_process = function(request, response) {
     var post = request.body;
     var email = post.email;
     var password = post.password;
-    var nickname = post.nickname;
-    console.log('login data = ' + email + ", " + password);
 
-    if (email === authData.email && password === authData.password) {
-        response.send('login success');
-    } else {
-        response.send('login fail');
-    }
+    db.query(`SELECT * FROM users WHERE email=? and password=?`, [email, password], function(error, user) {
+        
+        if (error) {
+            throw error;
+        }
 
+        if (user.length > 0) {
+            request.session.is_logined = true;
+            request.session.nickname = user[0].nickname;
+            response.redirect(`/`);
+        } else {
+            response.send('login fail');
+        }
+    });
 }
