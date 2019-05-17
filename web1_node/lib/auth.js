@@ -13,7 +13,7 @@ exports.login = function (request, response) {
         var form = `
         <form action="/auth/login_process" method="post">
         <p><input type="text" name="email" placeholder="email"></p>
-        <p><input type="password" name="pwd" placeholder="password"></p>
+        <p><input type="password" name="password" placeholder="password"></p>
         <p>
             <input type="submit" value="login">
         </p>
@@ -32,6 +32,7 @@ exports.login_process = function(request, response) {
     var email = post.email;
     var password = post.password;
     var nickname = post.nickname;
+    console.log('login data = ' + email + ", " + password);
 
     if (email === authData.email && password === authData.password) {
         response.send('login success');
