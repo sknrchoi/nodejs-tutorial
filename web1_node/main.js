@@ -11,9 +11,11 @@ var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 var dbconfig = require('./lib/dbconfig');
 
+// Third-party middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
 
+// Session
 app.use(session({
     secret: 'asadlfkj!@#!@#dfgasdg',
     store: new MySQLStore(dbconfig),
@@ -21,9 +23,16 @@ app.use(session({
     saveUninitialized: true
 }));
 
+// Passport Load (It should be done after session initialize.)
+var passport = require('passport')
+    , LocalStrategy = require('passport-local')
+    .Strategy;
+
+// View engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'view'));
 
+// Router
 app.use('/topic', topicRouter);
 app.use('/author', authorRouter);
 app.use('/', indexRouter);
