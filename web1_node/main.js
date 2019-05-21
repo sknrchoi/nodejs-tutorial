@@ -12,7 +12,9 @@ var MySQLStore = require('express-mysql-session')(session);
 var dbconfig = require('./lib/dbconfig');
 
 // Third-party middleware
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(compression());
 
 // Session
@@ -27,6 +29,11 @@ app.use(session({
 var passport = require('passport')
     , LocalStrategy = require('passport-local')
     .Strategy;
+
+app.post('/auth/login_process', passport.authenticate('local', {
+    successRedirect : '/',
+    failureRedirect : '/auth/login'
+}));
 
 // View engine
 app.set('view engine', 'pug');
