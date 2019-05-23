@@ -83,6 +83,7 @@ app.get('/auth/logout', function(request, response) {
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'view'));
 
+// To access user session in template
 app.use(function(request, response, next) {
     response.locals.user = request.session.passport.user;
     next();
