@@ -29,8 +29,6 @@ exports.page = function (request, response) {
                 throw error2;
             }
             
-            console.log('topic = ', topic);
-
             var title = sanitizeHtml(topic[0].title);
             var description = sanitizeHtml(topic[0].description);
             var authorName = sanitizeHtml(topic[0].name);

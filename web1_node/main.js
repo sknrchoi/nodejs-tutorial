@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var compression = require('compression');
+var db = require('./lib/db');
 var topicRouter = require('./route/topic');
 var authorRouter = require('./route/author');
 var indexRouter = require('./route/index');
@@ -26,20 +27,58 @@ app.use(session({
 }));
 
 // Passport Load (It should be done after session initialize.)
-var passport = require('passport')
-    , LocalStrategy = require('passport-local')
-    .Strategy;
+var passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 
-app.post('/auth/login_process', passport.authenticate('local', {
-    successRedirect : '/',
-    failureRedirect : '/auth/login'
-}));
+// Set passport middleware in Express version 4.x
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy({
+    usernameField : 'email',
+    passwordField : 'password'
+    }, 
+    (username, password, done) => {
+        console.log('[info] LocalStrategy : ', username, password);
+    
+        db.query(`SELECT * FROM users WHERE email=? and password=?`, [username, password], function(error, user) {
+            
+            if (error) {
+                done(error)
+            }
+            
+            if (user.length > 0) {
+                done(null, user[0]);
+            } else {
+                done(null, false, {message: 'User not exist'});
+            }
+        });
+    })
+);
+
+// Save user info to session when user login sucess
+passport.serializeUser(function(user, done) {
+    // user argument is returned value at LocalStrategy authentication function
+    console.log('[info] serializeUser', user);
+    done(null, user.email);
+});
+
+passport.deserializeUser(function(user, done) {
+    done(null, user);
+});
+
+app.post('/auth/login_process', 
+    passport.authenticate('local', {
+        successRedirect : '/',
+        failureRedirect : '/auth/login'
+    })
+);
 
 // View engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'view'));
 
-// Router
+ // Router
 app.use('/topic', topicRouter);
 app.use('/author', authorRouter);
 app.use('/', indexRouter);

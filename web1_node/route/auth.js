@@ -6,9 +6,9 @@ router.get('/login', (request, response) => {
     auth.login(request, response);
 });
 
-/*router.post('/login_process', (request, response) => {
-    auth.login_process(request, response);
-});*/
+// router.post('/login_process', (request, response) => {
+//     auth.login_process(request, response);
+// });
 
 module.exports = router;
 
