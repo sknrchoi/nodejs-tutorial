@@ -74,9 +74,19 @@ app.post('/auth/login_process',
     })
 );
 
+app.get('/auth/logout', function(request, response) {
+    request.logout();
+    response.redirect('/');
+});
+
 // View engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'view'));
+
+app.use(function(request, response, next) {
+    response.locals.user = request.session.passport.user;
+    next();
+});
 
  // Router
 app.use('/topic', topicRouter);

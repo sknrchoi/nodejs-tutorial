@@ -7,7 +7,10 @@ html
     body
         h1
             a(href='/') WEB
-        a(href='/auth/login') login
+        if user
+            a(href='/auth/logout') logout
+        else 
+            a(href='/auth/login') login
         br
         a(href='/author') author
         ul
