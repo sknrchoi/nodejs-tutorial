@@ -29,25 +29,9 @@ exports.login = function (request, response) {
     });
 }
 
-// exports.login_process = function(request, response) {
-//     var post = request.body;
-//     var email = post.email;
-//     var password = post.password;
-
-//     db.query(`SELECT * FROM users WHERE email=? and password=?`, [email, password], function(error, user) {
-        
-//         if (error) {
-//             throw error;
-//         }
-
-//         if (user.length > 0) {
-//             request.session.is_logined = true;
-//             request.session.nickname = user[0].nickname;
-//             request.session.save(function() {
-//                 response.redirect(`/`);
-//             })
-//         } else {
-//             response.send('login fail');
-//         }
-//     });
-// }
+exports.logout = function (request, response) {
+    request.logout();
+    request.session.save(function() {
+        response.redirect('/');
+    });
+}
