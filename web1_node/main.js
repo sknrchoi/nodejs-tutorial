@@ -11,6 +11,7 @@ var authRouter = require('./route/auth');
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 var dbconfig = require('./lib/dbconfig');
+var flash = require('connect-flash');
 
 // Third-party middleware
 app.use(bodyParser.urlencoded({
@@ -25,6 +26,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+app.use(flash());
 
 // Passport Load (It should be done after session initialize.)
 var passport = require('passport'),
@@ -48,9 +51,11 @@ passport.use(new LocalStrategy({
             }
             
             if (user.length > 0) {
-                done(null, user[0]);
+                done(null, user[0], {
+                    message : 'Welcome..'
+                });
             } else {
-                done(null, false, {message: 'User not exist'});
+                done(null, false, {message : 'User not exist'});
             }
         });
     })
@@ -81,7 +86,9 @@ passport.deserializeUser(function(id, done) {
 app.post('/auth/login_process', 
     passport.authenticate('local', {
         successRedirect : '/',
-        failureRedirect : '/auth/login'
+        failureRedirect : '/auth/login',
+        failureFlash : true,
+        successFlash : true
     })
 );
 

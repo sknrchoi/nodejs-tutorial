@@ -4,9 +4,16 @@ var sanitize = require('./sanitize');
 var sanitizeHtml = require('sanitize-html');
 
 exports.home = function (request, response) {
+    var fmsg = request.flash();
+    var feedback = '';
+   
+    if (fmsg.success) {
+        feedback = fmsg.success;
+    }
+
     db.query(`SELECT * FROM topic`, function(error, topics) {
         var title = 'Welcome';
-        var description = 'Hello node js';
+        var description = `${feedback} Hello node js`;
 
         response.render('index', {
             title : title,
