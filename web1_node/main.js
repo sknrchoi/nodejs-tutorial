@@ -44,7 +44,7 @@ passport.use(new LocalStrategy({
         db.query(`SELECT * FROM users WHERE email=? and password=?`, [username, password], function(error, user) {
             
             if (error) {
-                done(error)
+                done(error);
             }
             
             if (user.length > 0) {
@@ -63,8 +63,19 @@ passport.serializeUser(function(user, done) {
     done(null, user.email);
 });
 
-passport.deserializeUser(function(user, done) {
-    done(null, user);
+passport.deserializeUser(function(id, done) {
+    console.log('[info] deserializeUser', id);
+    db.query(`SELECT * FROM users WHERE email=?`, [id], function(error, user) {
+        if (error) {
+            done(error);
+        }
+
+        if (user.length > 0 ) {
+            done(null, user[0]);
+        } else {
+            done(null, false, {message: 'User not exist'});
+        }
+    });
 });
 
 app.post('/auth/login_process', 
@@ -76,7 +87,9 @@ app.post('/auth/login_process',
 
 app.get('/auth/logout', function(request, response) {
     request.logout();
-    response.redirect('/');
+    request.session.save(function() {
+        response.redirect('/');
+    });
 });
 
 // View engine
@@ -85,7 +98,11 @@ app.set('views', path.join(__dirname, 'view'));
 
 // To access user session in template
 app.use(function(request, response, next) {
-    response.locals.user = request.session.passport.user;
+    console.log("[Info] user = ", request.user);
+    if(request.user) {
+        response.locals.user = request.user;
+    }
+    
     next();
 });
 
