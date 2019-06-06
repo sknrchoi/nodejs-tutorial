@@ -13,10 +13,10 @@ module.exports = function(app) {
         usernameField : 'email',
         passwordField : 'password'
         }, 
-        (username, password, done) => {
-            console.log('[info] LocalStrategy : ', username, password);
+        (email, password, done) => {
+            console.log('[info] LocalStrategy : ', email, password);
 
-            db.query(`SELECT * FROM users WHERE email=? and password=?`, [username, password], function(error, user) {
+            db.query(`SELECT * FROM users WHERE email=? and password=?`, [email, password], function(error, user) {
                 
                 if (error) {
                     done(error);
@@ -37,15 +37,17 @@ module.exports = function(app) {
     passport.serializeUser(function(user, done) {
         // user argument is returned value at LocalStrategy authentication function
         console.log('[info] serializeUser', user);
-        done(null, user.email);
+        done(null, user.id);
     });
 
     passport.deserializeUser(function(id, done) {
-        console.log('[info] deserializeUser', id);
-        db.query(`SELECT * FROM users WHERE email=?`, [id], function(error, user) {
+        
+        db.query(`SELECT * FROM users WHERE id=?`, [id], function(error, user) {
             if (error) {
                 done(error);
             }
+
+            console.log('[info] deserializeUser', id, user);
 
             if (user.length > 0 ) {
                 done(null, user[0]);

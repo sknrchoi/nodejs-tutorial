@@ -23,6 +23,10 @@ module.exports = function(passport) {
     router.get('/register', function(request, response) {
         auth.register(request, response);
     });
-    
+
+    router.post('/register_process', function(request, response) {
+        auth.register_process(request, response);
+    });
+
     return router;
 }

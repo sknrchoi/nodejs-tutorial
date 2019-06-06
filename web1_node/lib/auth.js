@@ -1,5 +1,6 @@
 var db = require('./db');
 var sanitize = require('./sanitize');
+var shortid = require('shortid');
 
 exports.login = function (request, response) {
     var fmsg = request.flash();
@@ -52,7 +53,7 @@ exports.register = function (request, response) {
             <p><input type="text" name="email" placeholder="email"></p>
             <p><input type="password" name="password" placeholder="password"></p>
             <p><input type="password2" name="password2" placeholder="password"></p>
-            <p><input type="text" name="nickName" placeholder="display name"></p>
+            <p><input type="text" name="nickname" placeholder="display name"></p>
             <p>
                 <input type="submit" value="register">
             </p>
@@ -65,4 +66,32 @@ exports.register = function (request, response) {
         });
     });
 }
+
+exports.register_process = function(request, response) {
+    var post = request.body;
+    var password = post.password;
+    var password2 = post.password2;
+
+    if(password !== password2) {
+        request.flash('error', 'Password must same!');
+        response.redirect('/auth/register');
+    } else {
+        var user = {
+            id : shortid.generate(),
+            email : post.email,
+            password : password,
+            nickname : post.nickname
+        };
+
+        db.query(`INSERT INTO users set ?`, user, function(error, result) {
+            if(error) {
+                throw error;
+            }
+
+            request.login(user, function(err) {
+                return response.redirect('/');
+            })
+        })
+    }
+};
 
