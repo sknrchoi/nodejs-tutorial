@@ -11,7 +11,8 @@ html
             | #{user.nickname} 
             a(href='/auth/logout') logout
         else 
-            a(href='/auth/login') login
+            a(href='/auth/login') login | 
+            a(href='/auth/register') Register
         br
         a(href='/author') author
         ul

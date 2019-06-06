@@ -20,5 +20,9 @@ module.exports = function(passport) {
        auth.logout(request, response);
     });
 
+    router.get('/register', function(request, response) {
+        auth.register(request, response);
+    });
+    
     return router;
 }
