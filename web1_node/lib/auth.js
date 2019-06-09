@@ -1,6 +1,7 @@
 var db = require('./db');
 var sanitize = require('./sanitize');
 var shortid = require('shortid');
+var bcrypt = require('bcrypt');
 
 exports.login = function (request, response) {
     var fmsg = request.flash();
@@ -10,7 +11,7 @@ exports.login = function (request, response) {
         feedback = fmsg.error;
     }
 
-    db.query(`SELECT * FROM topic`, function(error, topics) {
+    db.query(`SELECT * FROM topic`, (error, topics) => {
         var title = 'WEB - login';
         var form = `
             <div style = "color:red">${feedback}</div>
@@ -45,7 +46,7 @@ exports.register = function (request, response) {
         feedback = fmsg.error;
     }
 
-    db.query(`SELECT * FROM topic`, function(error, topics) {
+    db.query(`SELECT * FROM topic`, (error, topics) => {
         var title = 'WEB - login';
         var form = `
             <div style = "color:red">${feedback}</div>
@@ -72,26 +73,27 @@ exports.register_process = function(request, response) {
     var password = post.password;
     var password2 = post.password2;
 
-    if(password !== password2) {
+    if (password !== password2) {
         request.flash('error', 'Password must same!');
         response.redirect('/auth/register');
     } else {
-        var user = {
-            id : shortid.generate(),
-            email : post.email,
-            password : password,
-            nickname : post.nickname
-        };
-
-        db.query(`INSERT INTO users set ?`, user, function(error, result) {
-            if(error) {
-                throw error;
-            }
-
-            request.login(user, function(err) {
-                return response.redirect('/');
+        bcrypt.hash(password, 10, (err, hash) => {
+            var user = {
+                id : shortid.generate(),
+                email : post.email,
+                password : hash,
+                nickname : post.nickname
+            };
+    
+            db.query(`INSERT INTO users set ?`, user, (error, result) => {
+                if(error) {
+                    throw error;
+                }
+    
+                request.login(user, (err) => {
+                    return response.redirect('/');
+                })
             })
-        })
+        });
     }
 };
-
