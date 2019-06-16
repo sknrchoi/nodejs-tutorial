@@ -1,5 +1,6 @@
 var db = require('./db');
 var bcrypt = require('bcrypt');
+var shortid = require('shortid');
 
 module.exports = function(app) {
     // Passport Load (It should be done after session initialize.)
@@ -57,9 +58,32 @@ module.exports = function(app) {
         callbackURL: googleCredentials.web.redirect_uris[0]
       },
       function(accessToken, refreshToken, profile, done) {
-           User.findOrCreate({ googleId: profile.id }, function (err, user) {
-             return done(err, user);
-           });
+          console.log("GoogleStrategy = ", accessToken, refreshToken, profile);
+          
+          var email = profile.emails[0].value;
+          db.query(`SELECT * FROM users WHERE email=?`, [email], (error, user) => {
+            if (error) {
+                done(error);
+            }
+            
+            if (user.length > 0) {
+                done(null, user[0]);
+            } else {
+                var user = {
+                    id : shortid.generate(),
+                    password : "",
+                    email : email,
+                    nickname : profile.displayName,
+                }
+                db.query(`INSERT INTO users set ?`, user, (error, result) => {
+                    if(error) {
+                        throw error;
+                    }
+
+                    done(null, user);
+                });
+            }
+        });
       }
     ));
 
