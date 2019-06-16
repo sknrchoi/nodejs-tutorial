@@ -2,6 +2,7 @@ extends layout.pug
 
 block content
     h2 #{title}
-    a(href='/topic/create') create
+    if user
+        a(href='/topic/create') create
     br
     | #{description}
