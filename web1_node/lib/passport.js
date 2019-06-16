@@ -4,7 +4,8 @@ var bcrypt = require('bcrypt');
 module.exports = function(app) {
     // Passport Load (It should be done after session initialize.)
     var passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+    LocalStrategy = require('passport-local').Strategy,
+    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
     // Set passport middleware in Express version 4.x
     app.use(passport.initialize());
@@ -44,6 +45,24 @@ module.exports = function(app) {
             });
         })
     );
+    
+    // Use the GoogleStrategy within Passport.
+    // Strategies in Passport require a `verify` function, which accept
+    // credentials (in this case, an accessToken, refreshToken, and Google
+    // profile), and invoke a callback with a user object.
+    var googleCredentials = require('../config/google.auth.json');
+    console.log("googleCredentials", googleCredentials);
+    passport.use(new GoogleStrategy({
+        clientID: googleCredentials.web.client_id,
+        clientSecret: googleCredentials.web.client_secret,
+        callbackURL: googleCredentials.web.redirect_uris[0]
+      },
+      function(accessToken, refreshToken, profile, done) {
+           User.findOrCreate({ googleId: profile.id }, function (err, user) {
+             return done(err, user);
+           });
+      }
+    ));
 
     // Save user info to session when user login sucess
     passport.serializeUser((user, done) => {

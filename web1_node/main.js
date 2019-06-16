@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var compression = require('compression');
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
-var dbconfig = require('./lib/dbconfig');
+var dbconfig = require('./config/dbconfig');
 var flash = require('connect-flash');
 
 // Third-party middleware

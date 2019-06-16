@@ -127,6 +127,7 @@ typings/
 .history
 
 # Ignore File
-db.js
+config/dbconfig.js
+config/google.auth.json
 
 # End of https://www.gitignore.io/api/node,macos,visualstudiocode

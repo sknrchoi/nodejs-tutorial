@@ -1,7 +1,7 @@
 module.exports = {
-    host: '192.168.10.73',
+    host: '127.0.0.1',
     port: 3306,
-    user: 'sknrchoi',
+    user: 'root',
     password: 'skfk1220',
     database: 'opentutorials'
 };
