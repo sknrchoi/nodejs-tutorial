@@ -15,6 +15,12 @@ module.exports = function(passport) {
             successFlash : true
         })
     );
+
+    router.get('/google',
+        passport.authenticate('google', 
+        { scope: ['https://www.googleapis.com/auth/plus.login'] })
+    );
+  
     
     router.get('/logout', function(request, response) {
        auth.logout(request, response);

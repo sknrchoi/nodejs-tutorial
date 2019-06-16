@@ -51,7 +51,6 @@ module.exports = function(app) {
     // credentials (in this case, an accessToken, refreshToken, and Google
     // profile), and invoke a callback with a user object.
     var googleCredentials = require('../config/google.auth.json');
-    console.log("googleCredentials", googleCredentials);
     passport.use(new GoogleStrategy({
         clientID: googleCredentials.web.client_id,
         clientSecret: googleCredentials.web.client_secret,

@@ -9,12 +9,13 @@ html
             a(href='/') WEB
         if user
             | #{user.nickname} 
-            a(href='/auth/logout') logout
+            a(href='/auth/logout') Logout
         else 
-            a(href='/auth/login') login | 
-            a(href='/auth/register') Register
+            a(href='/auth/login') Login | 
+            a(href='/auth/register') Register | 
+            a(href='/auth/google') Login with Google
         br
-        a(href='/author') author
+        a(href='/author') Author
         ul
             for topic in topics
                 li
