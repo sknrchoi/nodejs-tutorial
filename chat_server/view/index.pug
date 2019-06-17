@@ -1,0 +1,19 @@
+html
+    head
+        title chatting
+        meta(charset='utf-8')
+        script(src='/socket.io/socket.io.js')
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js')
+        script(type='text/javascript').
+            $(() => {
+                const socket = io();
+                socket.emit('login', 'user');
+
+                socket.on('login', (msg) => {
+                    console.log('server answer [login] = ' , msg);
+                });
+            });
+            
+    body
+        h2 welcome chat     
+        
