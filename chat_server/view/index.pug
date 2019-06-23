@@ -5,15 +5,55 @@ html
         script(src='/socket.io/socket.io.js')
         script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js')
         script(type='text/javascript').
+            const socket = io();
             $(() => {
-                const socket = io();
-                socket.emit('login', 'user');
+                if(typeof socket !== "undefined" && socket !== null) {
+                    console.log("chat server connected!");
+                }
 
                 socket.on('login', (msg) => {
-                    console.log('server answer [login] = ' , msg);
+                    console.log('[login] = ' , msg);
+                });
+
+                socket.on('logout', (msg) => {
+                    console.log('[logout] = ' , msg);
+                });
+
+                socket.on('message', (msg) => {
+                    console.log('[message] = ' , msg);
                 });
             });
-            
+
+            function send() {
+                console.log("send button clicked!");
+                var msgType = $("input[name='msgType']").val();
+                var userId = $("input[name='userId']").val();
+                var data = {
+                    'userId' : userId 
+                };
+                
+                if (msgType === "message") {
+                    data.msg = $("input[name='message']").val();
+                }
+                
+                sendMessageToServer(msgType, data);
+            }
+
+            function sendMessageToServer(msgType, data) {
+                socket.emit(msgType, data);
+            }
+
     body
-        h2 welcome chat     
+        h2 Chat Server Test Page
+        section
+            | userid :
+            input(type="text", name="userId")
+            br
+            | message type : 
+            input(type="text", name="msgType")
+            br
+            | send chatting message : 
+            input(type="text", name="message")
+            br
+            button(onclick="send()") send
         

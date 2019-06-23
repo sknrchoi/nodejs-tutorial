@@ -8,9 +8,20 @@ io.on('connection',(socket) => {
     console.log('user connected');
     console.log('socket id = ', socket.id);
 
-    socket.on('login', (msg) => {
-        console.log('client answer [login] = ', msg);
-        io.emit('login', socket.id + ' is logined');
+    socket.on('login', (data) => {
+        console.log('[login] = ', data);
+        io.emit('login', data.userId);
+    });
+
+    socket.on('logout', (data) => {
+        console.log('[logout] = ', data);
+        delete socket_id[data.userId];
+        io.emit('logout', data.userId);
+    });
+
+    socket.on('message', (data) => {
+        console.log('[message] = ', data);
+        socket.broadcast.emit('message', data.userId + " : " + data.msg);
     });
 });
 
