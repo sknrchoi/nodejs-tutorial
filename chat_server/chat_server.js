@@ -10,18 +10,39 @@ io.on('connection',(socket) => {
 
     socket.on('login', (data) => {
         console.log('[login] = ', data);
-        io.emit('login', data.userId);
+
+        var room = data.room;
+        socket.join(room);
+        socket.room = room;
+        socket.broadcast.to(room).emit('login', data.userId);
     });
 
     socket.on('logout', (data) => {
         console.log('[logout] = ', data);
-        delete socket_id[data.userId];
-        io.emit('logout', data.userId);
+        
+        if(typeof socket.room !== "undefined" && socket.room !== null) {
+            socket.broadcast.to(socket.room).emit('logout', data.userId);
+        }
     });
 
     socket.on('message', (data) => {
         console.log('[message] = ', data);
-        socket.broadcast.emit('message', data.userId + " : " + data.msg);
+        
+        if(typeof socket.room !== "undefined" && socket.room !== null) {
+            io.in(socket.room).emit('message', {
+                type : 'message',
+                userId : data.userId,
+                msg : data.msg
+            });
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log('[disconnect]');
+
+        if(typeof socket.room !== "undefined" && socket.room !== null) {
+            socket.broadcast.to(socket.room).emit('logout', data.userId);
+        }
     });
 });
 
